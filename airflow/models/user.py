@@ -21,7 +21,7 @@ from builtins import str
 
 from sqlalchemy import (Column, Integer, String)
 
-from airflow.models import Base
+from airflow.models import Base, ID_LEN
 
 
 class User(Base):

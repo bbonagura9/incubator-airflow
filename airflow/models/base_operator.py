@@ -43,6 +43,11 @@ from airflow.utils.operator_resources import Resources
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.utils.weight_rule import WeightRule
 from airflow.utils.log.logging_mixin import LoggingMixin
+from airflow.models import (
+    clear_task_instances, DAG, TaskInstance, XCOM_RETURN_KEY)
+
+# Used by DAG context_managers
+_CONTEXT_MANAGER_DAG = None
 
 
 class BaseOperator(LoggingMixin):

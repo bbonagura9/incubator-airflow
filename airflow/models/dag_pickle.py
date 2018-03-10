@@ -23,7 +23,6 @@ from sqlalchemy import (Column, Integer, Text, PickleType)
 from sqlalchemy_utc import UtcDateTime
 
 from airflow.utils import timezone
-
 from airflow.models import Base
 
 

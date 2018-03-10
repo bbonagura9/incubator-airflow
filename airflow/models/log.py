@@ -21,8 +21,7 @@ from sqlalchemy import (Column, Integer, String, Text)
 from sqlalchemy_utc import UtcDateTime
 
 from airflow.utils import timezone
-
-from airflow.models import Base
+from airflow.models import Base, ID_LEN
 
 
 class Log(Base):

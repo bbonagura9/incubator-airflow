@@ -49,6 +49,9 @@ from airflow.utils.db import provide_session
 from airflow.utils.helpers import validate_key
 from airflow.utils.state import State
 from airflow.utils.log.logging_mixin import LoggingMixin
+from airflow.models import (
+    clear_task_instances, BaseOperator, DagModel,
+    DagPickle, DagRun, DagStat, TaskInstance)
 
 
 class DAG(BaseDag, LoggingMixin):
@@ -120,7 +123,8 @@ class DAG(BaseDag, LoggingMixin):
     :param sla_miss_callback: specify a function to call when reporting SLA
         timeouts.
     :type sla_miss_callback: types.FunctionType
-    :param default_view: Specify DAG default view (tree, graph, duration, gantt, landing_times)
+    :param default_view: Specify DAG default view (tree, graph, duration,
+        gantt, landing_times)
     :type default_view: string
     :param orientation: Specify DAG orientation in graph view (LR, TB, RL, BT)
     :type orientation: string
@@ -607,14 +611,14 @@ class DAG(BaseDag, LoggingMixin):
         # Check SubDag for class but don't check class directly, see
         # https://github.com/airbnb/airflow/issues/1168
         from airflow.operators.subdag_operator import SubDagOperator
-        l = []
+        subdags = []
         for task in self.tasks:
             if (isinstance(task, SubDagOperator) or
                 # TODO remove in Airflow 2.0
                     type(task).__name__ == 'SubDagOperator'):
-                l.append(task.subdag)
-                l += task.subdag.subdags
-        return l
+                subdags.append(task.subdag)
+                subdags += task.subdag.subdags
+        return subdags
 
     def resolve_template_files(self):
         for t in self.tasks:

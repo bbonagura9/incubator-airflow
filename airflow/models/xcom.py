@@ -29,13 +29,11 @@ from sqlalchemy import and_
 from sqlalchemy_utc import UtcDateTime
 
 from airflow import configuration
-
 from airflow.utils import timezone
 from airflow.utils.db import provide_session
 from airflow.utils.helpers import as_tuple
 from airflow.utils.log.logging_mixin import LoggingMixin
-
-from airflow.models import Base
+from airflow.models import Base, ID_LEN
 
 
 class XCom(Base, LoggingMixin):
@@ -140,9 +138,11 @@ class XCom(Base, LoggingMixin):
             session=None):
         """
         Retrieve an XCom value, optionally meeting certain criteria.
-        TODO: "pickling" has been deprecated and JSON is preferred. "pickling" will be removed in Airflow 2.0.
+        TODO: "pickling" has been deprecated and JSON is preferred.
+              "pickling" will be removed in Airflow 2.0.
 
-        :param enable_pickling: If pickling is not enabled, the XCOM value will be parsed to JSON instead.
+        :param enable_pickling: If pickling is not enabled, the XCOM
+            value will be parsed to JSON instead.
         :return: XCom value
         """
         filters = []
@@ -195,7 +195,8 @@ class XCom(Base, LoggingMixin):
             session=None):
         """
         Retrieve an XCom value, optionally meeting certain criteria
-        TODO: "pickling" has been deprecated and JSON is preferred. "pickling" will be removed in Airflow 2.0.
+        TODO: "pickling" has been deprecated and JSON is preferred.
+              "pickling" will be removed in Airflow 2.0.
         """
         filters = []
         if key:

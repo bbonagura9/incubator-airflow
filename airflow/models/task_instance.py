@@ -51,8 +51,9 @@ from airflow.utils.state import State
 from airflow.utils.timeout import timeout
 from airflow.utils.net import get_hostname
 from airflow.utils.log.logging_mixin import LoggingMixin
-
-from airflow.models import Base
+from airflow.models import (
+    Base, DagRun, ID_LEN, Log, Pool, Stats, TaskFail,
+    Variable, XCom, XCOM_RETURN_KEY)
 
 
 class TaskInstance(Base, LoggingMixin):

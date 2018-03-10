@@ -46,6 +46,7 @@ from airflow.utils.helpers import pprinttable
 from airflow.utils.state import State
 from airflow.utils.timeout import timeout
 from airflow.utils.log.logging_mixin import LoggingMixin
+from airflow.models import DagModel, DAG, Stats, TaskInstance
 
 
 class DagBag(BaseDagBag, LoggingMixin):

@@ -21,8 +21,7 @@ from sqlalchemy import (Column, Integer, String, Text)
 
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
-
-from airflow.models import Base
+from airflow.models import (Base, TaskInstance)
 
 
 class Pool(Base):

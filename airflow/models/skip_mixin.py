@@ -17,8 +17,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import functools
-
+from airflow.models import TaskInstance
 from airflow.utils import timezone
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
@@ -32,48 +31,6 @@ class SkipMixin(LoggingMixin):
         Sets tasks instances to skipped from the same dag run.
 
         :param dag_run: the DagRun for whimport getpass
-import imp
-import importlib
-import itertools
-import zipfile
-import jinja2
-import json
-import logging
-import os
-import pickle
-import re
-import signal
-import sys
-import textwrap
-import traceback
-import warnings
-import hashlib
-
-from datetime import datetime
-from urllib.parse import urlparse, quote
-
-from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
-from sqlalchemy import func, or_, and_
-from sqlalchemy.dialects.mysql import LONGTEXT
-from sqlalchemy.orm import reconstructor, relationship, synonym
-from sqlalchemy_utc import UtcDateTime
-
-from croniter import croniter
-import six
-
-from airflow import settings, utils
-from airflow.executors import GetDefaultExecutor, LocalExecutor
-from airflow import configuration
-from airflow.exceptions import AirflowException, AirflowSkipException, AirflowTaskTimeout
-from airflow.dag.base_dag import BaseDag, BaseDagBag
-from airflow.ti_deps.deps.not_in_retry_period_dep import NotInRetryPeriodDep
-from airflow.ti_deps.deps.prev_dagrun_dep import PrevDagrunDep
-from airflow.ti_deps.deps.trigger_rule_dep import TriggerRuleDep
-from airflow.ti_deps.deps.task_concurrency_dep import TaskConcurrencyDep
-
-from airflow.ti_deps.dep_context import DepContext, QUEUE_DEPS, RUN_DEPSich to set the tasks to skipped
         :param execution_date: execution_date
         :param tasks: tasks to skip (not task_ids)
         :param session: db session to use
@@ -107,6 +64,3 @@ from airflow.ti_deps.dep_context import DepContext, QUEUE_DEPS, RUN_DEPSich to s
                 session.merge(ti)
 
             session.commit()
-
-
-@functools.total_ordering

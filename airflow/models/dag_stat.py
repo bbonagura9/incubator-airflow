@@ -25,8 +25,7 @@ from sqlalchemy import func
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
 from airflow.utils.log.logging_mixin import LoggingMixin
-
-from airflow.models import Base
+from airflow.models import Base, ID_LEN, DagRun
 
 
 class DagStat(Base):

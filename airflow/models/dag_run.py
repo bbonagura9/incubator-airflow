@@ -20,7 +20,7 @@ from __future__ import unicode_literals
 from sqlalchemy import (Column, Integer, String,
                         DateTime, Boolean, PickleType, Index)
 from sqlalchemy import func, or_, and_
-from sqlalchemy.ext.declarative import (declared_attr, declarative_base)
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import synonym
 from sqlalchemy_utc import UtcDateTime
 
@@ -28,14 +28,12 @@ import six
 
 from airflow import settings
 from airflow.exceptions import AirflowException
-
 from airflow.ti_deps.dep_context import DepContext
 from airflow.utils import timezone
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
 from airflow.utils.log.logging_mixin import LoggingMixin
-
-from airflow.models import Base
+from airflow.models import Base, ID_LEN, DagStat, TaskInstance, Stats
 
 
 class DagRun(Base, LoggingMixin):
@@ -389,7 +387,7 @@ class DagRun(Base, LoggingMixin):
         """
         qry = session.query(DagRun).filter(
             DagRun.dag_id == dag_id,
-            DagRun.external_trigger == False,
+            DagRun.external_trigger == False,  # noqa
             DagRun.execution_date == execution_date,
         )
         return qry.first()

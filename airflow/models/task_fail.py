@@ -20,7 +20,7 @@ from __future__ import unicode_literals
 from sqlalchemy import (Column, String, Float)
 from sqlalchemy_utc import UtcDateTime
 
-from airflow.models import Base
+from airflow.models import Base, ID_LEN
 
 
 class TaskFail(Base):

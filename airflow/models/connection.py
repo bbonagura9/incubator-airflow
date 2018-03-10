@@ -25,14 +25,13 @@ import json
 from urllib.parse import urlparse
 
 from sqlalchemy import (Column, Integer, String, Boolean)
-from sqlalchemy.ext.declarative import (declared_attr, declarative_base)
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import synonym
 
 
 from airflow.exceptions import AirflowException
 from airflow.utils.log.logging_mixin import LoggingMixin
-
-from airflow.models import Base
+from airflow.models import Base, ID_LEN, get_fernet
 
 
 class Connection(Base, LoggingMixin):

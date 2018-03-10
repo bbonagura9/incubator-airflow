@@ -22,7 +22,7 @@ from builtins import str
 from sqlalchemy import (Column, String, Text, Boolean)
 from sqlalchemy_utc import UtcDateTime
 
-from airflow.models import Base
+from airflow.models import Base, ID_LEN
 
 
 class SlaMiss(Base):

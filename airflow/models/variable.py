@@ -28,11 +28,9 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import synonym
 
 from airflow.exceptions import AirflowException
-
 from airflow.utils.db import provide_session
 from airflow.utils.log.logging_mixin import LoggingMixin
-
-from airflow.models import Base
+from airflow.models import Base, ID_LEN, get_fernet
 
 
 class Variable(Base, LoggingMixin):
@@ -72,7 +70,8 @@ class Variable(Base, LoggingMixin):
                 self.is_encrypted = True
             except AirflowException:
                 self.log.exception(
-                    "Failed to load fernet while encrypting value, using non-encrypted value."
+                    ("Failed to load fernet while encrypting value, "
+                     "using non-encrypted value.")
                 )
                 self._val = value
                 self.is_encrypted = False

@@ -21,12 +21,9 @@ from sqlalchemy import (
     Column, Integer, String, Boolean)
 from sqlalchemy_utc import UtcDateTime
 
-
 from airflow import configuration
-
 from airflow.utils.db import provide_session
-
-from airflow.models import Base
+from airflow.models import (Base, ID_LEN)
 
 
 class DagModel(Base):
