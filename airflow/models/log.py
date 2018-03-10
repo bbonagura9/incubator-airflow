@@ -19,11 +19,10 @@ from __future__ import unicode_literals
 
 from sqlalchemy import (Column, Integer, String, Text)
 from sqlalchemy_utc import UtcDateTime
-from sqlalchemy.ext.declarative import declarative_base
 
 from airflow.utils import timezone
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class Log(Base):

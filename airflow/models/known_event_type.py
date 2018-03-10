@@ -18,9 +18,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from sqlalchemy import (Column, Integer, String)
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class KnownEventType(Base):

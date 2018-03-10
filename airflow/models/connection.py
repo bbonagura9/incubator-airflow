@@ -32,7 +32,7 @@ from sqlalchemy.orm import synonym
 from airflow.exceptions import AirflowException
 from airflow.utils.log.logging_mixin import LoggingMixin
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class Connection(Base, LoggingMixin):

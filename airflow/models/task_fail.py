@@ -19,9 +19,8 @@ from __future__ import unicode_literals
 
 from sqlalchemy import (Column, String, Float)
 from sqlalchemy_utc import UtcDateTime
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class TaskFail(Base):

@@ -35,7 +35,7 @@ from airflow.utils.db import provide_session
 from airflow.utils.state import State
 from airflow.utils.log.logging_mixin import LoggingMixin
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class DagRun(Base, LoggingMixin):

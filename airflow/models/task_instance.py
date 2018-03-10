@@ -36,7 +36,6 @@ from sqlalchemy import (Column, Integer, String, Index, Float)
 from sqlalchemy import func
 from sqlalchemy.orm import reconstructor
 from sqlalchemy_utc import UtcDateTime
-from sqlalchemy.ext.declarative import declarative_base
 
 from airflow import settings
 from airflow import configuration
@@ -53,7 +52,7 @@ from airflow.utils.timeout import timeout
 from airflow.utils.net import get_hostname
 from airflow.utils.log.logging_mixin import LoggingMixin
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class TaskInstance(Base, LoggingMixin):

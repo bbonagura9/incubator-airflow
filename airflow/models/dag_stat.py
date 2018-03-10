@@ -21,13 +21,12 @@ import itertools
 
 from sqlalchemy import (Column, Integer, String, Boolean)
 from sqlalchemy import func
-from sqlalchemy.ext.declarative import declarative_base
 
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
 from airflow.utils.log.logging_mixin import LoggingMixin
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class DagStat(Base):

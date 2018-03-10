@@ -21,11 +21,10 @@ import dill
 
 from sqlalchemy import (Column, Integer, Text, PickleType)
 from sqlalchemy_utc import UtcDateTime
-from sqlalchemy.ext.declarative import declarative_base
 
 from airflow.utils import timezone
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class DagPickle(Base):

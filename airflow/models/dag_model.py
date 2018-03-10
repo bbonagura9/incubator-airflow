@@ -19,7 +19,6 @@ from __future__ import unicode_literals
 
 from sqlalchemy import (
     Column, Integer, String, Boolean)
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utc import UtcDateTime
 
 
@@ -27,7 +26,7 @@ from airflow import configuration
 
 from airflow.utils.db import provide_session
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class DagModel(Base):

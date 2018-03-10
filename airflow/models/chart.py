@@ -21,11 +21,9 @@ from sqlalchemy import (
     Column, Integer, String, Text, Boolean, ForeignKey)
 from sqlalchemy.orm import relationship
 from sqlalchemy_utc import UtcDateTime
-from sqlalchemy.ext.declarative import declarative_base
 
 from airflow.utils import timezone
-
-Base = declarative_base()
+from airflow.models import Base
 
 
 class Chart(Base):

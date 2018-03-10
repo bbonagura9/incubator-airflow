@@ -18,12 +18,11 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from sqlalchemy import (Column, Integer, String, Text)
-from sqlalchemy.ext.declarative import declarative_base
 
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class Pool(Base):

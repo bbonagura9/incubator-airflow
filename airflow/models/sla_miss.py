@@ -20,10 +20,9 @@ from __future__ import unicode_literals
 from builtins import str
 
 from sqlalchemy import (Column, String, Text, Boolean)
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utc import UtcDateTime
 
-Base = declarative_base()
+from airflow.models import Base
 
 
 class SlaMiss(Base):
