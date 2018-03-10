@@ -21,11 +21,9 @@ from __future__ import unicode_literals
 from builtins import str
 
 
-
 from sqlalchemy import (
     Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
     Index, Float, LargeBinary)
-
 
 
 from airflow.utils.helpers import (

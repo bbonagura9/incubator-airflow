@@ -73,12 +73,15 @@ class DagBag(BaseDagBag, LoggingMixin):
     """
 
     def __init__(
-            self,
-            dag_folder=None,
-            executor=None,
-            include_examples=configuration.getboolean('core', 'LOAD_EXAMPLES')):
+        self,
+        dag_folder=None,
+        executor=None,
+        include_examples=configuration.getboolean(
+            'core',
+            'LOAD_EXAMPLES')):
 
-        # do not use default arg in signature, to fix import cycle on plugin load
+        # do not use default arg in signature, to fix import cycle on plugin
+        # load
         if executor is None:
             executor = GetDefaultExecutor()
         dag_folder = dag_folder or settings.DAGS_FOLDER
@@ -127,7 +130,8 @@ class DagBag(BaseDagBag, LoggingMixin):
             found_dags = self.process_file(
                 filepath=orm_dag.fileloc, only_if_updated=False)
 
-            # If the source file no longer exports `dag_id`, delete it from self.dags
+            # If the source file no longer exports `dag_id`, delete it from
+            # self.dags
             if found_dags and dag_id in [dag.dag_id for dag in found_dags]:
                 return self.dags[dag_id]
             elif dag_id in self.dags:
@@ -150,7 +154,8 @@ class DagBag(BaseDagBag, LoggingMixin):
         try:
             # This failed before in what may have been a git sync
             # race condition
-            file_last_changed_on_disk = datetime.fromtimestamp(os.path.getmtime(filepath))
+            file_last_changed_on_disk = datetime.fromtimestamp(
+                os.path.getmtime(filepath))
             if only_if_updated \
                     and filepath in self.file_last_changed \
                     and file_last_changed_on_disk == self.file_last_changed[filepath]:
@@ -194,12 +199,15 @@ class DagBag(BaseDagBag, LoggingMixin):
                 mod_name, ext = os.path.splitext(mod.filename)
                 if not head and (ext == '.py' or ext == '.pyc'):
                     if mod_name == '__init__':
-                        self.log.warning("Found __init__.%s at root of %s", ext, filepath)
+                        self.log.warning(
+                            "Found __init__.%s at root of %s", ext, filepath)
                     if safe_mode:
                         with zip_file.open(mod.filename) as zf:
-                            self.log.debug("Reading %s from %s", mod.filename, filepath)
+                            self.log.debug(
+                                "Reading %s from %s", mod.filename, filepath)
                             content = zf.read()
-                            if not all([s in content for s in (b'DAG', b'airflow')]):
+                            if not all(
+                                    [s in content for s in (b'DAG', b'airflow')]):
                                 self.file_last_changed[filepath] = (
                                     file_last_changed_on_disk)
                                 # todo: create ignore list
@@ -240,7 +248,8 @@ class DagBag(BaseDagBag, LoggingMixin):
         from airflow.jobs import LocalTaskJob as LJ
         self.log.info("Finding 'running' jobs without a recent heartbeat")
         TI = TaskInstance
-        secs = configuration.getint('scheduler', 'scheduler_zombie_task_threshold')
+        secs = configuration.getint(
+            'scheduler', 'scheduler_zombie_task_threshold')
         limit_dttm = timezone.utcnow() - timedelta(seconds=secs)
         self.log.info("Failing jobs without heartbeat after %s", limit_dttm)
 
@@ -322,7 +331,8 @@ class DagBag(BaseDagBag, LoggingMixin):
                             continue
                         mod_name, file_ext = os.path.splitext(
                             os.path.split(filepath)[-1])
-                        if file_ext != '.py' and not zipfile.is_zipfile(filepath):
+                        if file_ext != '.py' and not zipfile.is_zipfile(
+                                filepath):
                             continue
                         if not any(
                                 [re.findall(p, filepath) for p in patterns]):
@@ -343,7 +353,9 @@ class DagBag(BaseDagBag, LoggingMixin):
                     except Exception as e:
                         self.log.exception(e)
         Stats.gauge(
-            'collect_dags', (timezone.utcnow() - start_dttm).total_seconds(), 1)
+            'collect_dags',
+            (timezone.utcnow() - start_dttm).total_seconds(),
+            1)
         Stats.gauge(
             'dagbag_size', len(self.dags), 1)
         Stats.gauge(

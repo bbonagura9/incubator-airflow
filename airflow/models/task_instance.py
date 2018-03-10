@@ -106,8 +106,9 @@ class TaskInstance(Base, LoggingMixin):
 
         # make sure we have a localized execution_date stored in UTC
         if execution_date and not timezone.is_localized(execution_date):
-            self.log.warning("execution date %s has no timezone information. Using "
-                             "default from dag or system", execution_date)
+            self.log.warning(
+                "execution date %s has no timezone information. Using "
+                "default from dag or system", execution_date)
             if self.task.has_dag():
                 execution_date = timezone.make_aware(execution_date,
                                                      self.task.dag.timezone)
@@ -470,8 +471,10 @@ class TaskInstance(Base, LoggingMixin):
 
             # LEGACY: most likely running from unit tests
             if not dr:
-                # Means that this TI is NOT being run from a DR, but from a catchup
-                previous_scheduled_date = dag.previous_schedule(self.execution_date)
+                # Means that this TI is NOT being run from a DR, but from a
+                # catchup
+                previous_scheduled_date = dag.previous_schedule(
+                    self.execution_date)
                 if not previous_scheduled_date:
                     return None
 
@@ -485,7 +488,8 @@ class TaskInstance(Base, LoggingMixin):
                 last_dagrun = dr.get_previous_dagrun(session=session)
 
             if last_dagrun:
-                return last_dagrun.get_task_instance(self.task_id, session=session)
+                return last_dagrun.get_task_instance(
+                    self.task_id, session=session)
 
         return None
 
@@ -542,8 +546,10 @@ class TaskInstance(Base, LoggingMixin):
 
                 self.log.debug(
                     "%s dependency '%s' PASSED: %s, %s",
-                    self, dep_status.dep_name, dep_status.passed, dep_status.reason
-                )
+                    self,
+                    dep_status.dep_name,
+                    dep_status.passed,
+                    dep_status.reason)
 
                 if not dep_status.passed:
                     yield dep_status
@@ -561,11 +567,19 @@ class TaskInstance(Base, LoggingMixin):
         """
         delay = self.task.retry_delay
         if self.task.retry_exponential_backoff:
-            min_backoff = int(delay.total_seconds() * (2 ** (self.try_number - 2)))
+            min_backoff = int(delay.total_seconds() *
+                              (2 ** (self.try_number - 2)))
             # deterministic per task instance
-            hash = int(hashlib.sha1("{}#{}#{}#{}".format(self.dag_id, self.task_id,
-                self.execution_date, self.try_number).encode('utf-8')).hexdigest(), 16)
-            # between 0.5 * delay * (2^retry_number) and 1.0 * delay * (2^retry_number)
+            hash = int(
+                hashlib.sha1(
+                    "{}#{}#{}#{}".format(
+                        self.dag_id,
+                        self.task_id,
+                        self.execution_date,
+                        self.try_number).encode('utf-8')).hexdigest(),
+                16)
+            # between 0.5 * delay * (2^retry_number) and 1.0 * delay *
+            # (2^retry_number)
             modded_hash = min_backoff + hash % min_backoff
             # timedelta has a maximum representable value. The exponentiation
             # here means this value can be exceeded after a certain number
@@ -686,7 +700,7 @@ class TaskInstance(Base, LoggingMixin):
             session.commit()
             return False
 
-        #TODO: Logging needs cleanup, not clear what is being printed
+        # TODO: Logging needs cleanup, not clear what is being printed
         hr = "\n" + ("-" * 80) + "\n"  # Line break
 
         # For reporting purposes, we report based on 1-indexed,
@@ -713,10 +727,10 @@ class TaskInstance(Base, LoggingMixin):
             # have been running prematurely. This should be handled in the
             # scheduling mechanism.
             self.state = State.NONE
-            msg = ("FIXME: Rescheduling due to concurrency limits reached at task "
-                   "runtime. Attempt {attempt} of {total}. State set to NONE.").format(
-                attempt=self.try_number,
-                total=self.max_tries + 1)
+            msg = (
+                "FIXME: Rescheduling due to concurrency limits reached at task "
+                "runtime. Attempt {attempt} of {total}. State set to NONE.").format(
+                attempt=self.try_number, total=self.max_tries + 1)
             self.log.warning(hr + msg + hr)
 
             self.queued_dttm = timezone.utcnow()
@@ -751,10 +765,12 @@ class TaskInstance(Base, LoggingMixin):
         settings.engine.dispose()
         if verbose:
             if mark_success:
-                msg = "Marking success for {} on {}".format(self.task, self.execution_date)
+                msg = "Marking success for {} on {}".format(
+                    self.task, self.execution_date)
                 self.log.info(msg)
             else:
-                msg = "Executing {} on {}".format(self.task, self.execution_date)
+                msg = "Executing {} on {}".format(
+                    self.task, self.execution_date)
                 self.log.info(msg)
         return True
 
@@ -895,23 +911,23 @@ class TaskInstance(Base, LoggingMixin):
             pool=None,
             session=None):
         res = self._check_and_change_state_before_execution(
-                verbose=verbose,
-                ignore_all_deps=ignore_all_deps,
-                ignore_depends_on_past=ignore_depends_on_past,
-                ignore_task_deps=ignore_task_deps,
-                ignore_ti_state=ignore_ti_state,
+            verbose=verbose,
+            ignore_all_deps=ignore_all_deps,
+            ignore_depends_on_past=ignore_depends_on_past,
+            ignore_task_deps=ignore_task_deps,
+            ignore_ti_state=ignore_ti_state,
+            mark_success=mark_success,
+            test_mode=test_mode,
+            job_id=job_id,
+            pool=pool,
+            session=session)
+        if res:
+            self._run_raw_task(
                 mark_success=mark_success,
                 test_mode=test_mode,
                 job_id=job_id,
                 pool=pool,
                 session=session)
-        if res:
-            self._run_raw_task(
-                    mark_success=mark_success,
-                    test_mode=test_mode,
-                    job_id=job_id,
-                    pool=pool,
-                    session=session)
 
     def dry_run(self):
         task = self.task
@@ -922,18 +938,30 @@ class TaskInstance(Base, LoggingMixin):
         task_copy.dry_run()
 
     @provide_session
-    def handle_failure(self, error, test_mode=False, context=None, session=None):
+    def handle_failure(
+            self,
+            error,
+            test_mode=False,
+            context=None,
+            session=None):
         self.log.exception(error)
         task = self.task
         self.end_date = timezone.utcnow()
         self.set_duration()
-        Stats.incr('operator_failures_{}'.format(task.__class__.__name__), 1, 1)
+        Stats.incr(
+            'operator_failures_{}'.format(
+                task.__class__.__name__), 1, 1)
         Stats.incr('ti_failures')
         if not test_mode:
             session.add(Log(State.FAILED, self))
 
         # Log failure duration
-        session.add(TaskFail(task, self.execution_date, self.start_date, self.end_date))
+        session.add(
+            TaskFail(
+                task,
+                self.execution_date,
+                self.start_date,
+                self.end_date))
 
         # Let's go deeper
         try:
@@ -1022,6 +1050,7 @@ class TaskInstance(Base, LoggingMixin):
             Wrapper around Variable. This way you can get variables in templates by using
             {var.value.your_variable_name}.
             """
+
             def __init__(self):
                 self.var = None
 
@@ -1037,6 +1066,7 @@ class TaskInstance(Base, LoggingMixin):
             Wrapper around deserialized Variables. This way you can get variables
             in templates by using {var.json.your_variable_name}.
             """
+
             def __init__(self):
                 self.var = None
 

@@ -18,14 +18,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
-
-
-
 from sqlalchemy import (
     Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
     Index, Float, LargeBinary)
 from sqlalchemy_utc import UtcDateTime
-
 
 
 from airflow.utils.helpers import (

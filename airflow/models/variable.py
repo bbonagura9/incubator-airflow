@@ -55,13 +55,13 @@ class Variable(Base, LoggingMixin):
         if self._val and self.is_encrypted:
             try:
                 fernet = get_fernet()
-            except:
+            except BaseException:
                 raise AirflowException(
                     "Can't decrypt _val for key={}, FERNET_KEY configuration \
                     missing".format(self.key))
             try:
                 return fernet.decrypt(bytes(self._val, 'utf-8')).decode()
-            except:
+            except BaseException:
                 raise AirflowException(
                     "Can't decrypt _val for key={}, invalid token or value"
                     .format(self.key))
@@ -102,7 +102,8 @@ class Variable(Base, LoggingMixin):
         :return: Mixed
         """
         default_sentinel = object()
-        obj = Variable.get(key, default_var=default_sentinel, deserialize_json=deserialize_json)
+        obj = Variable.get(key, default_var=default_sentinel,
+                           deserialize_json=deserialize_json)
         if obj is default_sentinel:
             if default is not None:
                 Variable.set(key, default, serialize_json=deserialize_json)

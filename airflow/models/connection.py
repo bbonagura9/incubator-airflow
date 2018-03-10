@@ -124,7 +124,7 @@ class Connection(Base, LoggingMixin):
         if self._password and self.is_encrypted:
             try:
                 fernet = get_fernet()
-            except:
+            except BaseException:
                 raise AirflowException(
                     "Can't decrypt encrypted password for login={}, \
                     FERNET_KEY configuration is missing".format(self.login))
@@ -139,8 +139,9 @@ class Connection(Base, LoggingMixin):
                 self._password = fernet.encrypt(bytes(value, 'utf-8')).decode()
                 self.is_encrypted = True
             except AirflowException:
-                self.log.exception("Failed to load fernet while encrypting value, "
-                                    "using non-encrypted value.")
+                self.log.exception(
+                    "Failed to load fernet while encrypting value, "
+                    "using non-encrypted value.")
                 self._password = value
                 self.is_encrypted = False
 
@@ -153,7 +154,7 @@ class Connection(Base, LoggingMixin):
         if self._extra and self.is_extra_encrypted:
             try:
                 fernet = get_fernet()
-            except:
+            except BaseException:
                 raise AirflowException(
                     "Can't decrypt `extra` params for login={},\
                     FERNET_KEY configuration is missing".format(self.login))
@@ -168,8 +169,9 @@ class Connection(Base, LoggingMixin):
                 self._extra = fernet.encrypt(bytes(value, 'utf-8')).decode()
                 self.is_extra_encrypted = True
             except AirflowException:
-                self.log.exception("Failed to load fernet while encrypting value, "
-                                    "using non-encrypted value.")
+                self.log.exception(
+                    "Failed to load fernet while encrypting value, "
+                    "using non-encrypted value.")
                 self._extra = value
                 self.is_extra_encrypted = False
 
@@ -228,7 +230,7 @@ class Connection(Base, LoggingMixin):
             elif self.conn_type == 'docker':
                 from airflow.hooks.docker_hook import DockerHook
                 return DockerHook(docker_conn_id=self.conn_id)
-        except:
+        except BaseException:
             pass
 
     def __repr__(self):
@@ -243,6 +245,8 @@ class Connection(Base, LoggingMixin):
                 obj = json.loads(self.extra)
             except Exception as e:
                 self.log.exception(e)
-                self.log.error("Failed parsing the json for conn_id %s", self.conn_id)
+                self.log.error(
+                    "Failed parsing the json for conn_id %s",
+                    self.conn_id)
 
         return obj

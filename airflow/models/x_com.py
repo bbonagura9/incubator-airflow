@@ -18,7 +18,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
-
 import json
 import pickle
 
@@ -57,7 +56,12 @@ class XCom(Base, LoggingMixin):
     dag_id = Column(String(ID_LEN), nullable=False)
 
     __table_args__ = (
-        Index('idx_xcom_dag_task_date', dag_id, task_id, execution_date, unique=False),
+        Index(
+            'idx_xcom_dag_task_date',
+            dag_id,
+            task_id,
+            execution_date,
+            unique=False),
     )
 
     def __repr__(self):
@@ -88,7 +92,8 @@ class XCom(Base, LoggingMixin):
         session.expunge_all()
 
         if enable_pickling is None:
-            enable_pickling = configuration.getboolean('core', 'enable_xcom_pickling')
+            enable_pickling = configuration.getboolean(
+                'core', 'enable_xcom_pickling')
 
         if enable_pickling:
             value = pickle.dumps(value)
@@ -125,14 +130,14 @@ class XCom(Base, LoggingMixin):
     @classmethod
     @provide_session
     def get_one(
-                cls,
-                execution_date,
-                key=None,
-                task_id=None,
-                dag_id=None,
-                include_prior_dates=False,
-                enable_pickling=None,
-                session=None):
+            cls,
+            execution_date,
+            key=None,
+            task_id=None,
+            dag_id=None,
+            include_prior_dates=False,
+            enable_pickling=None,
+            session=None):
         """
         Retrieve an XCom value, optionally meeting certain criteria.
         TODO: "pickling" has been deprecated and JSON is preferred. "pickling" will be removed in Airflow 2.0.
@@ -154,13 +159,14 @@ class XCom(Base, LoggingMixin):
 
         query = (
             session.query(cls.value)
-                .filter(and_(*filters))
-                .order_by(cls.execution_date.desc(), cls.timestamp.desc()))
+            .filter(and_(*filters))
+            .order_by(cls.execution_date.desc(), cls.timestamp.desc()))
 
         result = query.first()
         if result:
             if enable_pickling is None:
-                enable_pickling = configuration.getboolean('core', 'enable_xcom_pickling')
+                enable_pickling = configuration.getboolean(
+                    'core', 'enable_xcom_pickling')
 
             if enable_pickling:
                 return pickle.loads(result.value)
@@ -178,15 +184,15 @@ class XCom(Base, LoggingMixin):
     @classmethod
     @provide_session
     def get_many(
-                cls,
-                execution_date,
-                key=None,
-                task_ids=None,
-                dag_ids=None,
-                include_prior_dates=False,
-                limit=100,
-                enable_pickling=None,
-                session=None):
+            cls,
+            execution_date,
+            key=None,
+            task_ids=None,
+            dag_ids=None,
+            include_prior_dates=False,
+            limit=100,
+            enable_pickling=None,
+            session=None):
         """
         Retrieve an XCom value, optionally meeting certain criteria
         TODO: "pickling" has been deprecated and JSON is preferred. "pickling" will be removed in Airflow 2.0.
@@ -205,12 +211,13 @@ class XCom(Base, LoggingMixin):
 
         query = (
             session.query(cls)
-                .filter(and_(*filters))
-                .order_by(cls.execution_date.desc(), cls.timestamp.desc())
-                .limit(limit))
+            .filter(and_(*filters))
+            .order_by(cls.execution_date.desc(), cls.timestamp.desc())
+            .limit(limit))
         results = query.all()
         if enable_pickling is None:
-            enable_pickling = configuration.getboolean('core', 'enable_xcom_pickling')
+            enable_pickling = configuration.getboolean(
+                'core', 'enable_xcom_pickling')
         for result in results:
             if enable_pickling:
                 result.value = pickle.loads(result.value)
@@ -234,7 +241,7 @@ class XCom(Base, LoggingMixin):
         for xcom in xcoms:
             if not isinstance(xcom, XCom):
                 raise TypeError(
-                    'Expected XCom; received {}'.format(xcom.__class__.__name__)
-                )
+                    'Expected XCom; received {}'.format(
+                        xcom.__class__.__name__))
             session.delete(xcom)
         session.commit()

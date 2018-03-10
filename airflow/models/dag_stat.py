@@ -88,7 +88,7 @@ class DagStat(Base):
             if dag_ids:
                 qry = qry.filter(DagStat.dag_id.in_(set(dag_ids)))
             if dirty_only:
-                qry = qry.filter(DagStat.dirty == True)
+                qry = qry.filter(DagStat.dirty)
 
             qry = qry.with_for_update().all()
 
@@ -113,8 +113,11 @@ class DagStat(Base):
                     count = counts[(dag_id, state)]
 
                 session.merge(
-                    DagStat(dag_id=dag_id, state=state, count=count, dirty=False)
-                )
+                    DagStat(
+                        dag_id=dag_id,
+                        state=state,
+                        count=count,
+                        dirty=False))
 
             session.commit()
         except Exception as e:

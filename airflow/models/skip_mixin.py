@@ -109,7 +109,7 @@ class SkipMixin(LoggingMixin):
                 TaskInstance.dag_id == dag_run.dag_id,
                 TaskInstance.execution_date == dag_run.execution_date,
                 TaskInstance.task_id.in_(task_ids)
-            ).update({TaskInstance.state : State.SKIPPED,
+            ).update({TaskInstance.state: State.SKIPPED,
                       TaskInstance.start_date: now,
                       TaskInstance.end_date: now},
                      synchronize_session=False)

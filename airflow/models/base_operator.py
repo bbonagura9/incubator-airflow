@@ -260,9 +260,11 @@ class BaseOperator(LoggingMixin):
         if not TriggerRule.is_valid(trigger_rule):
             raise AirflowException(
                 "The trigger_rule must be one of {all_triggers},"
-                "'{d}.{t}'; received '{tr}'."
-                .format(all_triggers=TriggerRule.all_triggers,
-                        d=dag.dag_id if dag else "", t=task_id, tr=trigger_rule))
+                "'{d}.{t}'; received '{tr}'." .format(
+                    all_triggers=TriggerRule.all_triggers,
+                    d=dag.dag_id if dag else "",
+                    t=task_id,
+                    tr=trigger_rule))
 
         self.trigger_rule = trigger_rule
         self.depends_on_past = depends_on_past
@@ -299,9 +301,11 @@ class BaseOperator(LoggingMixin):
         if not WeightRule.is_valid(weight_rule):
             raise AirflowException(
                 "The weight_rule must be one of {all_weight_rules},"
-                "'{d}.{t}'; received '{tr}'."
-                .format(all_weight_rules=WeightRule.all_weight_rules,
-                        d=dag.dag_id if dag else "", t=task_id, tr=weight_rule))
+                "'{d}.{t}'; received '{tr}'." .format(
+                    all_weight_rules=WeightRule.all_weight_rules,
+                    d=dag.dag_id if dag else "",
+                    t=task_id,
+                    tr=weight_rule))
         self.weight_rule = weight_rule
 
         self.resources = Resources(**(resources or {}))
@@ -343,7 +347,7 @@ class BaseOperator(LoggingMixin):
 
     def __eq__(self, other):
         return (
-            type(self) == type(other) and
+            isinstance(self, type(other)) and
             all(self.__dict__.get(c, None) == other.__dict__.get(c, None)
                 for c in self._comps))
 
@@ -597,7 +601,8 @@ class BaseOperator(LoggingMixin):
                 any([content.endswith(ext) for ext in exts])):
             return jinja_env.get_template(content).render(**context)
         else:
-            return self.render_template_from_field(attr, content, context, jinja_env)
+            return self.render_template_from_field(
+                attr, content, context, jinja_env)
 
     def prepare_template(self):
         """
@@ -641,12 +646,12 @@ class BaseOperator(LoggingMixin):
 
     @provide_session
     def clear(
-              self,
-              start_date=None,
-              end_date=None,
-              upstream=False,
-              downstream=False,
-              session=None):
+            self,
+            start_date=None,
+            end_date=None,
+            upstream=False,
+            downstream=False,
+            session=None):
         """
         Clears the state of task instances associated with the task, following
         the parameters specified.
@@ -812,7 +817,8 @@ class BaseOperator(LoggingMixin):
 
         # relationships can only be set if the tasks share a single DAG. Tasks
         # without a DAG are assigned to that DAG.
-        dags = {t._dag.dag_id: t.dag for t in [self] + task_list if t.has_dag()}
+        dags = {t._dag.dag_id: t.dag for t in [
+            self] + task_list if t.has_dag()}
 
         if len(dags) > 1:
             raise AirflowException(

@@ -255,7 +255,10 @@ class DagRun(Base, LoggingMixin):
 
         tis = self.get_task_instances(session=session)
 
-        self.log.info("Updating state for %s considering %s task(s)", self, len(tis))
+        self.log.info(
+            "Updating state for %s considering %s task(s)",
+            self,
+            len(tis))
 
         for ti in list(tis):
             # skip in db?
@@ -271,11 +274,14 @@ class DagRun(Base, LoggingMixin):
             state=State.unfinished(),
             session=session
         )
-        none_depends_on_past = all(not t.task.depends_on_past for t in unfinished_tasks)
-        none_task_concurrency = all(t.task.task_concurrency is None for t in unfinished_tasks)
+        none_depends_on_past = all(
+            not t.task.depends_on_past for t in unfinished_tasks)
+        none_task_concurrency = all(
+            t.task.task_concurrency is None for t in unfinished_tasks)
         # small speed up
         if unfinished_tasks and none_depends_on_past and none_task_concurrency:
-            # todo: this can actually get pretty slow: one task costs between 0.01-015s
+            # todo: this can actually get pretty slow: one task costs between
+            # 0.01-015s
             no_dependencies_met = True
             for ut in unfinished_tasks:
                 # We need to flag upstream and check for changes because upstream
@@ -291,7 +297,8 @@ class DagRun(Base, LoggingMixin):
                     break
 
         duration = (timezone.utcnow() - start_dttm).total_seconds() * 1000
-        Stats.timing("dagrun.dependency-check.{}".format(self.dag_id), duration)
+        Stats.timing(
+            "dagrun.dependency-check.{}".format(self.dag_id), duration)
 
         # future: remove the check on adhoc tasks (=active_tasks)
         if len(tis) == len(dag.active_tasks):
@@ -299,8 +306,8 @@ class DagRun(Base, LoggingMixin):
             roots = [t for t in tis if t.task_id in root_ids]
 
             # if all roots finished and at least one failed, the run failed
-            if (not unfinished_tasks and
-                    any(r.state in (State.FAILED, State.UPSTREAM_FAILED) for r in roots)):
+            if (not unfinished_tasks and any(r.state in (
+                    State.FAILED, State.UPSTREAM_FAILED) for r in roots)):
                 self.log.info('Marking run %s failed', self)
                 self.state = State.FAILED
                 dag.handle_callback(self, success=False, reason='task_failure',
@@ -311,21 +318,29 @@ class DagRun(Base, LoggingMixin):
                                               for r in roots):
                 self.log.info('Marking run %s successful', self)
                 self.state = State.SUCCESS
-                dag.handle_callback(self, success=True, reason='success', session=session)
+                dag.handle_callback(
+                    self,
+                    success=True,
+                    reason='success',
+                    session=session)
 
             # if *all tasks* are deadlocked, the run failed
             elif (unfinished_tasks and none_depends_on_past and
                   none_task_concurrency and no_dependencies_met):
                 self.log.info('Deadlock; marking run %s failed', self)
                 self.state = State.FAILED
-                dag.handle_callback(self, success=False, reason='all_tasks_deadlocked',
-                                    session=session)
+                dag.handle_callback(
+                    self,
+                    success=False,
+                    reason='all_tasks_deadlocked',
+                    session=session)
 
             # finally, if the roots aren't done, the dag is still running
             else:
                 self.state = State.RUNNING
 
-        # todo: determine we want to use with_for_update to make sure to lock the run
+        # todo: determine we want to use with_for_update to make sure to lock
+        # the run
         session.merge(self)
         session.commit()
 

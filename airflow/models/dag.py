@@ -139,24 +139,37 @@ class DAG(BaseDag, LoggingMixin):
     """
 
     def __init__(
-            self, dag_id,
+            self,
+            dag_id,
             description='',
-            schedule_interval=timedelta(days=1),
-            start_date=None, end_date=None,
+            schedule_interval=timedelta(
+                days=1),
+            start_date=None,
+            end_date=None,
             full_filepath=None,
             template_searchpath=None,
             user_defined_macros=None,
             user_defined_filters=None,
             default_args=None,
-            concurrency=configuration.getint('core', 'dag_concurrency'),
+            concurrency=configuration.getint(
+                'core',
+                'dag_concurrency'),
             max_active_runs=configuration.getint(
-                'core', 'max_active_runs_per_dag'),
+                'core',
+                'max_active_runs_per_dag'),
             dagrun_timeout=None,
             sla_miss_callback=None,
-            default_view=configuration.get('webserver', 'dag_default_view').lower(),
-            orientation=configuration.get('webserver', 'dag_orientation'),
-            catchup=configuration.getboolean('scheduler', 'catchup_by_default'),
-            on_success_callback=None, on_failure_callback=None,
+            default_view=configuration.get(
+                'webserver',
+                'dag_default_view').lower(),
+            orientation=configuration.get(
+                'webserver',
+                'dag_orientation'),
+            catchup=configuration.getboolean(
+                'scheduler',
+                'catchup_by_default'),
+            on_success_callback=None,
+            on_failure_callback=None,
             params=None):
 
         self.user_defined_macros = user_defined_macros
@@ -248,7 +261,7 @@ class DAG(BaseDag, LoggingMixin):
 
     def __eq__(self, other):
         return (
-            type(self) == type(other) and
+            isinstance(self, type(other)) and
             # Use getattr() instead of __dict__ as __dict__ doesn't return
             # correct values for properties.
             all(getattr(self, c, None) == getattr(other, c, None)
@@ -306,7 +319,8 @@ class DAG(BaseDag, LoggingMixin):
         if isinstance(self._schedule_interval, six.string_types):
             dttm = timezone.make_naive(dttm, self.timezone)
             cron = croniter(self._schedule_interval, dttm)
-            following = timezone.make_aware(cron.get_next(datetime), self.timezone)
+            following = timezone.make_aware(
+                cron.get_next(datetime), self.timezone)
             return timezone.convert_to_utc(following)
         elif isinstance(self._schedule_interval, timedelta):
             return dttm + self._schedule_interval
@@ -344,11 +358,13 @@ class DAG(BaseDag, LoggingMixin):
         using_end_date = end_date
 
         # dates for dag runs
-        using_start_date = using_start_date or min([t.start_date for t in self.tasks])
+        using_start_date = using_start_date or min(
+            [t.start_date for t in self.tasks])
         using_end_date = using_end_date or timezone.utcnow()
 
         # next run date for a subdag isn't relevant (schedule_interval for subdags
-        # is ignored) so we use the dag run's start date in the case of a subdag
+        # is ignored) so we use the dag run's start date in the case of a
+        # subdag
         next_run_date = (self.normalize_schedule(using_start_date)
                          if not self.is_subdag else using_start_date)
 
@@ -373,7 +389,10 @@ class DAG(BaseDag, LoggingMixin):
         return dttm
 
     @provide_session
-    def get_last_dagrun(self, session=None, include_externally_triggered=False):
+    def get_last_dagrun(
+            self,
+            session=None,
+            include_externally_triggered=False):
         """
         Returns the last dag run for this dag, None if there was none.
         Last dag run can be any type of run eg. scheduled or backfilled.
@@ -509,7 +528,8 @@ class DAG(BaseDag, LoggingMixin):
         """
         callback = self.on_success_callback if success else self.on_failure_callback
         if callback:
-            self.log.info('Executing dag callback function: {}'.format(callback))
+            self.log.info(
+                'Executing dag callback function: {}'.format(callback))
             tis = dagrun.get_task_instances(session=session)
             ti = tis[-1]  # get first TaskInstance of DagRun
             ti.task = self.get_task(ti.task_id)
@@ -594,8 +614,8 @@ class DAG(BaseDag, LoggingMixin):
         l = []
         for task in self.tasks:
             if (isinstance(task, SubDagOperator) or
-                #TODO remove in Airflow 2.0
-                type(task).__name__ == 'SubDagOperator'):
+                # TODO remove in Airflow 2.0
+                    type(task).__name__ == 'SubDagOperator'):
                 l.append(task.subdag)
                 l += task.subdag.subdags
         return l
@@ -700,8 +720,9 @@ class DAG(BaseDag, LoggingMixin):
                     graph_sorted.append(node)
 
             if not acyclic:
-                raise AirflowException("A cyclic dependency occurred in dag: {}"
-                                       .format(self.dag_id))
+                raise AirflowException(
+                    "A cyclic dependency occurred in dag: {}" .format(
+                        self.dag_id))
 
         return tuple(graph_sorted)
 
@@ -843,7 +864,10 @@ class DAG(BaseDag, LoggingMixin):
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in list(self.__dict__.items()):
-            if k not in ('user_defined_macros', 'user_defined_filters', 'params'):
+            if k not in (
+                'user_defined_macros',
+                'user_defined_filters',
+                    'params'):
                 setattr(result, k, copy.deepcopy(v, memo))
 
         result.user_defined_macros = self.user_defined_macros
@@ -1151,7 +1175,10 @@ class DAG(BaseDag, LoggingMixin):
         session.commit()
 
         for subdag in self.subdags:
-            subdag.sync_to_db(owner=owner, sync_time=sync_time, session=session)
+            subdag.sync_to_db(
+                owner=owner,
+                sync_time=sync_time,
+                session=session)
 
     @staticmethod
     @provide_session
@@ -1190,8 +1217,8 @@ class DAG(BaseDag, LoggingMixin):
                                  DagModel.is_active).all():
             log.info(
                 "Deactivating DAG ID %s since it was last touched by the scheduler at %s",
-                dag.dag_id, dag.last_scheduler_run.isoformat()
-            )
+                dag.dag_id,
+                dag.last_scheduler_run.isoformat())
             dag.is_active = False
             session.merge(dag)
             session.commit()
