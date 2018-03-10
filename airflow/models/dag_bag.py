@@ -33,11 +33,7 @@ import hashlib
 
 from datetime import datetime
 
-from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
 from sqlalchemy import or_
-
 
 from airflow import settings
 from airflow.executors import GetDefaultExecutor
@@ -46,8 +42,7 @@ from airflow.dag.base_dag import BaseDagBag
 
 from airflow.utils import timezone
 from airflow.utils.db import provide_session
-from airflow.utils.helpers import (
-    as_tuple, is_container, is_in, validate_key, pprinttable)
+from airflow.utils.helpers import pprinttable
 from airflow.utils.state import State
 from airflow.utils.timeout import timeout
 from airflow.utils.log.logging_mixin import LoggingMixin

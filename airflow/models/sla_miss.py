@@ -17,18 +17,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-
 from builtins import str
 
-
-from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
+from sqlalchemy import (Column, String, Text, Boolean)
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utc import UtcDateTime
 
-
-from airflow.utils.helpers import (
-    as_tuple, is_container, is_in, validate_key, pprinttable)
+Base = declarative_base()
 
 
 class SlaMiss(Base):

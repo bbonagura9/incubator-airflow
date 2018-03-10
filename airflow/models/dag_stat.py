@@ -19,9 +19,7 @@ from __future__ import unicode_literals
 
 import itertools
 
-from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
+from sqlalchemy import (Column, Integer, String, Boolean)
 from sqlalchemy import func
 from sqlalchemy.ext.declarative import declarative_base
 

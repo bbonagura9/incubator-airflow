@@ -17,17 +17,21 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from future.standard_library import install_aliases
-
-from builtins import str
-from builtins import object, bytes
-import copy
-from collections import namedtuple
-from datetime import timedelta
-
-import dill
 import functools
-import getpass
+
+from airflow.utils import timezone
+from airflow.utils.db import provide_session
+from airflow.utils.state import State
+from airflow.utils.log.logging_mixin import LoggingMixin
+
+
+class SkipMixin(LoggingMixin):
+    @provide_session
+    def skip(self, dag_run, execution_date, tasks, session=None):
+        """
+        Sets tasks instances to skipped from the same dag run.
+
+        :param dag_run: the DagRun for whimport getpass
 import imp
 import importlib
 import itertools
@@ -70,30 +74,7 @@ from airflow.ti_deps.deps.prev_dagrun_dep import PrevDagrunDep
 from airflow.ti_deps.deps.trigger_rule_dep import TriggerRuleDep
 from airflow.ti_deps.deps.task_concurrency_dep import TaskConcurrencyDep
 
-from airflow.ti_deps.dep_context import DepContext, QUEUE_DEPS, RUN_DEPS
-from airflow.utils import timezone
-from airflow.utils.dates import cron_presets, date_range as utils_date_range
-from airflow.utils.db import provide_session
-from airflow.utils.decorators import apply_defaults
-from airflow.utils.email import send_email
-from airflow.utils.helpers import (
-    as_tuple, is_container, is_in, validate_key, pprinttable)
-from airflow.utils.operator_resources import Resources
-from airflow.utils.state import State
-from airflow.utils.timeout import timeout
-from airflow.utils.trigger_rule import TriggerRule
-from airflow.utils.weight_rule import WeightRule
-from airflow.utils.net import get_hostname
-from airflow.utils.log.logging_mixin import LoggingMixin
-
-
-class SkipMixin(LoggingMixin):
-    @provide_session
-    def skip(self, dag_run, execution_date, tasks, session=None):
-        """
-        Sets tasks instances to skipped from the same dag run.
-
-        :param dag_run: the DagRun for which to set the tasks to skipped
+from airflow.ti_deps.dep_context import DepContext, QUEUE_DEPS, RUN_DEPSich to set the tasks to skipped
         :param execution_date: execution_date
         :param tasks: tasks to skip (not task_ids)
         :param session: db session to use

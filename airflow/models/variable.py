@@ -23,20 +23,17 @@ from builtins import object, bytes
 
 import json
 
-
-from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
+from sqlalchemy import (Column, Integer, String, Text, Boolean)
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import synonym
-
+from sqlalchemy.ext.declarative import declarative_base
 
 from airflow.exceptions import AirflowException
 
 from airflow.utils.db import provide_session
-from airflow.utils.helpers import (
-    as_tuple, is_container, is_in, validate_key, pprinttable)
 from airflow.utils.log.logging_mixin import LoggingMixin
+
+Base = declarative_base()
 
 
 class Variable(Base, LoggingMixin):

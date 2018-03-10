@@ -32,28 +32,28 @@ import hashlib
 
 from urllib.parse import quote
 
-from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
+from sqlalchemy import (Column, Integer, String, Index, Float)
 from sqlalchemy import func
 from sqlalchemy.orm import reconstructor
 from sqlalchemy_utc import UtcDateTime
-
+from sqlalchemy.ext.declarative import declarative_base
 
 from airflow import settings
 from airflow import configuration
-from airflow.exceptions import AirflowException, AirflowSkipException, AirflowTaskTimeout
+from airflow.exceptions import (
+    AirflowException, AirflowSkipException, AirflowTaskTimeout)
 
 from airflow.ti_deps.dep_context import DepContext, QUEUE_DEPS, RUN_DEPS
 from airflow.utils import timezone
 from airflow.utils.db import provide_session
 from airflow.utils.email import send_email
-from airflow.utils.helpers import (
-    as_tuple, is_container, is_in, validate_key, pprinttable)
+from airflow.utils.helpers import is_container
 from airflow.utils.state import State
 from airflow.utils.timeout import timeout
 from airflow.utils.net import get_hostname
 from airflow.utils.log.logging_mixin import LoggingMixin
+
+Base = declarative_base()
 
 
 class TaskInstance(Base, LoggingMixin):

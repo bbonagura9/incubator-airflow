@@ -23,19 +23,20 @@ import pickle
 
 
 from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
+    Column, Integer, String, DateTime,
+    Index, LargeBinary)
 from sqlalchemy import and_
 from sqlalchemy_utc import UtcDateTime
-
+from sqlalchemy.ext.declarative import declarative_base
 
 from airflow import configuration
 
 from airflow.utils import timezone
 from airflow.utils.db import provide_session
-from airflow.utils.helpers import (
-    as_tuple, is_container, is_in, validate_key, pprinttable)
+from airflow.utils.helpers import as_tuple
 from airflow.utils.log.logging_mixin import LoggingMixin
+
+Base = declarative_base()
 
 
 class XCom(Base, LoggingMixin):

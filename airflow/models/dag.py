@@ -32,9 +32,6 @@ import warnings
 
 from datetime import datetime
 
-from sqlalchemy import (
-    Column, Integer, String, DateTime, Text, Boolean, ForeignKey, PickleType,
-    Index, Float, LargeBinary)
 from sqlalchemy import func, or_
 
 from croniter import croniter
@@ -49,8 +46,7 @@ from airflow.dag.base_dag import BaseDag
 from airflow.utils import timezone
 from airflow.utils.dates import cron_presets, date_range as utils_date_range
 from airflow.utils.db import provide_session
-from airflow.utils.helpers import (
-    as_tuple, is_container, is_in, validate_key, pprinttable)
+from airflow.utils.helpers import validate_key
 from airflow.utils.state import State
 from airflow.utils.log.logging_mixin import LoggingMixin
 
